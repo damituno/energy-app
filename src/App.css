@@ -1,0 +1,282 @@
+/* 应用特定样式 */
+
+/* 页面容器 */
+.page-container {
+  min-height: 100vh;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+/* 卡片样式 */
+.app-card {
+  @apply bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50;
+}
+
+/* 能量级别指示器 */
+.energy-indicator {
+  @apply relative overflow-hidden;
+}
+
+.energy-indicator::after {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* 任务完成动画 */
+.task-complete-animation {
+  animation: task-complete 0.5s ease-out;
+}
+
+@keyframes task-complete {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 浮动事件气泡 */
+.floating-bubble {
+  animation: float-bubble 4s ease-in-out infinite;
+}
+
+@keyframes float-bubble {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+  75% {
+    transform: translateY(10px) rotate(-2deg);
+  }
+}
+
+/* 进度环 */
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 图表提示框 */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+/* 滑块样式 */
+.custom-slider [data-orientation="horizontal"] {
+  @apply h-2 rounded-full bg-muted;
+}
+
+.custom-slider [data-orientation="horizontal"] > [data-orientation="horizontal"] {
+  @apply rounded-full bg-primary;
+}
+
+/* 开关样式 */
+.custom-switch[data-state="checked"] {
+  @apply bg-primary;
+}
+
+/* 选择器样式 */
+.custom-select [data-radix-popper-content-wrapper] {
+  @apply z-50;
+}
+
+/* 对话框动画 */
+.dialog-overlay {
+  animation: dialog-overlay-show 0.2s ease-out;
+}
+
+.dialog-content {
+  animation: dialog-content-show 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dialog-overlay-show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-content-show {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 底部导航阴影 */
+.bottom-nav-shadow {
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 滚动条样式 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/30;
+}
+
+/* 触摸反馈 */
+.touch-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.touch-ripple::after {
+  content: '';
+  @apply absolute inset-0 bg-white/20 rounded-full scale-0 opacity-0;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.touch-ripple:active::after {
+  @apply scale-150 opacity-100;
+  transition: transform 0s, opacity 0s;
+}
+
+/* 霓虹发光效果 */
+.neon-glow {
+  box-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 20px currentColor;
+}
+
+/* 渐变边框 */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(var(--background), var(--background)) padding-box,
+              linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent))) border-box;
+  border: 2px solid transparent;
+}
+
+/* 玻璃态效果增强 */
+.glass-enhanced {
+  @apply backdrop-blur-xl bg-white/5 border border-white/10;
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* 脉冲动画 */
+.pulse-ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* 摇晃动画 */
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* 弹跳动画 */
+.bounce-in {
+  animation: bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 淡入上滑 */
+.fade-in-up {
+  animation: fade-in-up 0.5s ease-out;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 380px) {
+  .page-container {
+    @apply px-3;
+  }
+}
+
+/* 安全区域适配 */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* 减少动效 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
