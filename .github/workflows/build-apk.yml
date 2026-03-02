@@ -69,10 +69,10 @@ jobs:
         run: npx cap sync
 
       - name: Grant execute permission
-        run: chmod +x gradlew
-        
+        run: chmod +x android/gradlew
+
       - name: Build APK
-        run: ./gradlew assembleRelease
+        run: cd android && ./gradlew assembleRelease
 
       - name: Sign APK (Debug)
         working-directory: ./android
