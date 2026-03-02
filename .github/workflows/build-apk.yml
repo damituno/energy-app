@@ -74,8 +74,12 @@ jobs:
         run: npx cap sync
 
       - name: Build Android APK
+        working-directory: android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          cd android
           chmod +x gradlew
            ./gradlew assembleRelease
            
