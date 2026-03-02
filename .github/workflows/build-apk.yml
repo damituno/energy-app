@@ -65,6 +65,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/release.keystore
+
+
       - name: Sync Capacitor
         run: npx cap sync
 
@@ -73,6 +78,11 @@ jobs:
           cd android
           chmod +x gradlew
            ./gradlew assembleRelease
+           
+      - name: Build Release APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
 
       - name: Sign APK (Debug)
         working-directory: ./android
