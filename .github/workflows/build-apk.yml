@@ -68,8 +68,10 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync
 
-      - name: Build Android APK
-        working-directory: ./android
+      - name: Grant execute permission
+        run: chmod +x gradlew
+        
+      - name: Build APK
         run: ./gradlew assembleRelease
 
       - name: Sign APK (Debug)
