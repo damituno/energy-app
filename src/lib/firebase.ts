@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
 import { 
   getAuth, 
   onAuthStateChanged,
@@ -19,20 +20,27 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 
-// Firebase 配置 - 使用示例配置，实际使用时需要替换为真实配置
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBvokRvRSy-nRJ1kE4tmezXAsKpLNcufug",
-  authDomain: "plan-f2426.firebaseapp.com",
-  projectId: "plan-f2426",
-  storageBucket: "plan-f2426.firebasestorage.app",
-  messagingSenderId: "793710205811",
-  appId: "1:793710205811:web:19306ce9dd2ed8e7dfc306",
-  measurementId: "G-4RQG3T93Y6"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
-// 初始化 Firebase
+
+// 初始化一次
 const app = initializeApp(firebaseConfig);
+
+// 导出实例供其他文件使用
+export const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export default app;
 
 // 用户相关操作
 export const createUser = async (userId: string, phone: string, nickname: string) => {

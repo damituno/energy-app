@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { 
   Sparkles, 
@@ -30,30 +31,45 @@ const slides = [
   },
 ];
 
-interface OnboardingPageProps {
-  onComplete: () => void;
-  onSkip: () => void;
-}
-
-export function OnboardingPage({ onComplete, onSkip }: OnboardingPageProps) {
+export function OnboardingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { state, dispatch } = useApp();
 
   const nextSlide = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(prev => prev + 1);
     } else {
-      onComplete();
+      // 最后一页，标记引导完成
+      // 保持 isNewUser 为 true，但引导已完成
+      // 这会触发重新渲染，进入问卷页面
+      if (state.user) {
+        dispatch({
+          type: 'SET_USER',
+          payload: { ...state.user, isNewUser: false }
+        });
+      }
+    }
+  };
+
+  const skipOnboarding = () => {
+    // 跳过引导，直接进入问卷
+    if (state.user) {
+      dispatch({
+        type: 'SET_USER',
+        payload: { ...state.user, isNewUser: false }
+      });
     }
   };
 
   const CurrentIcon = slides[currentSlide].icon;
+  const isLastSlide = currentSlide === slides.length - 1;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* 跳过按钮 */}
       <div className="absolute top-4 right-4 z-10">
         <button
-          onClick={onSkip}
+          onClick={skipOnboarding}
           className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           跳过
@@ -108,7 +124,7 @@ export function OnboardingPage({ onComplete, onSkip }: OnboardingPageProps) {
           onClick={nextSlide}
           className="w-full h-14 text-lg"
         >
-          {currentSlide < slides.length - 1 ? (
+          {!isLastSlide ? (
             <>
               下一步
               <ChevronRight className="w-5 h-5 ml-2" />

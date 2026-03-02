@@ -27,7 +27,7 @@ const pageTransition: Transition = {
 // 主应用内容
 function AppContent() {
   const [currentTab, setCurrentTab] = useState('home');
-  const { state } = useApp();
+  const { state, generatePlan } = useApp();
   const { isDarkMode, isAuthenticated, user, isLoading } = state;
 
   // 应用主题
@@ -59,19 +59,17 @@ function AppContent() {
 
   // 新用户显示引导页
   if (user?.isNewUser) {
-    return (
-      <OnboardingPage
-        onComplete={() => {}}
-        onSkip={() => {}}
-      />
-    );
+    return <OnboardingPage />;
   }
 
   // 未完成问卷显示问卷页
   if (!user?.hasCompletedQuestionnaire) {
     return (
       <QuestionnairePage
-        onComplete={() => {}}
+        onComplete={async () => {
+          // 问卷完成后生成计划
+          await generatePlan();
+        }}
       />
     );
   }

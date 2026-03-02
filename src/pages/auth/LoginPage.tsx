@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,12 @@ import {
   CheckCircle2,
   Loader2
 } from 'lucide-react';
+import { 
+  signInWithPhoneNumber, 
+  RecaptchaVerifier,
+  type ConfirmationResult 
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 export function LoginPage() {
   const { login } = useApp();
@@ -19,34 +25,74 @@ export function LoginPage() {
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [error, setError] = useState('');
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const recaptchaRef = useRef<HTMLDivElement>(null);
 
+  // 发送验证码
   const handleSendCode = async () => {
     if (phone.length !== 11) return;
     
     setIsLoading(true);
-    // 模拟发送验证码
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsLoading(false);
-    setStep('code');
-    setCountdown(60);
+    setError('');
     
-    // 倒计时
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
+    try {
+      // 创建 reCAPTCHA 验证器
+      const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {
+          // reCAPTCHA 已解决
+        },
       });
-    }, 1000);
+
+      // 发送验证码
+      const confirmation = await signInWithPhoneNumber(auth, '+86' + phone, recaptchaVerifier);
+      setConfirmationResult(confirmation);
+      setStep('code');
+      setCountdown(60);
+      
+      // 倒计时
+      const timer = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (err: any) {
+      console.error('发送验证码失败:', err);
+      setError(err.message || '发送验证码失败，请重试');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  // 验证登录
   const handleLogin = async () => {
-    if (code.length !== 6) return;
+    if (code.length !== 6 || !confirmationResult) return;
     
     setIsLoading(true);
-    await login(phone);
+    setError('');
+    
+    try {
+      // 验证验证码
+      await confirmationResult.confirm(code);
+      // 登录成功，调用 login 更新应用状态
+      await login(phone);
+    } catch (err: any) {
+      console.error('登录失败:', err);
+      setError(err.message || '验证码错误，请重试');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 演示模式：跳过验证码直接登录
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    await login('13800138000');
     setIsLoading(false);
   };
 
@@ -55,6 +101,9 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* reCAPTCHA 容器 */}
+      <div id="recaptcha-container" ref={recaptchaRef} className="hidden" />
+      
       {/* 顶部装饰 */}
       <div className="relative h-48 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-transparent" />
@@ -92,6 +141,17 @@ export function LoginPage() {
           <h1 className="text-2xl font-bold text-foreground mb-2">欢迎使用能量管理</h1>
           <p className="text-muted-foreground">根据你的能量状态，智能规划每一天</p>
         </motion.div>
+
+        {/* 错误提示 */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm text-center"
+          >
+            {error}
+          </motion.div>
+        )}
 
         <AnimatePresence mode="wait">
           {step === 'phone' ? (
@@ -134,6 +194,16 @@ export function LoginPage() {
                   </>
                 )}
               </Button>
+
+              {/* 演示模式 */}
+              <div className="text-center">
+                <button
+                  onClick={handleDemoLogin}
+                  className="text-sm text-muted-foreground hover:text-primary underline"
+                >
+                  演示模式（跳过登录）
+                </button>
+              </div>
 
               {/* 微信登录选项 */}
               <div className="relative">

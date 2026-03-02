@@ -451,18 +451,38 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return Math.floor(basePoints * 1.2);
   };
 
-  // 用户登录（模拟）
+  // 用户登录
   const login = async (phone: string) => {
-    const mockUser: User = {
-      id: generateId(),
-      phone,
-      nickname: '用户' + phone.slice(-4),
-      createdAt: new Date(),
-      lastLogin: new Date(),
-      isNewUser: true,
-      hasCompletedQuestionnaire: false,
-    };
-    dispatch({ type: 'SET_USER', payload: mockUser });
+    // 检查是否已有用户数据
+    const { value } = await Preferences.get({ key: 'energy-app-user' });
+    let user: User;
+    
+    if (value) {
+      // 已有用户，恢复数据
+      const savedUser = JSON.parse(value);
+      user = {
+        ...savedUser,
+        lastLogin: new Date(),
+      };
+    } else {
+      // 新用户
+      user = {
+        id: generateId(),
+        phone,
+        nickname: '用户' + phone.slice(-4),
+        createdAt: new Date(),
+        lastLogin: new Date(),
+        isNewUser: true,
+        hasCompletedQuestionnaire: false,
+      };
+      // 保存用户数据
+      await Preferences.set({
+        key: 'energy-app-user',
+        value: JSON.stringify(user),
+      });
+    }
+    
+    dispatch({ type: 'SET_USER', payload: user });
     dispatch({ type: 'SET_AUTHENTICATED', payload: true });
   };
 

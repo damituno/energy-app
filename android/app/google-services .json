@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "803038596786",
-    "project_id": "energy-app-15442",
-    "storage_bucket": "energy-app-15442.firebasestorage.app"
+    "project_number": "793710205811",
+    "project_id": "plan-f2426",
+    "storage_bucket": "plan-f2426.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:803038596786:android:56667c0c2178880a9c83ab",
+        "mobilesdk_app_id": "1:793710205811:android:25a90ba1d76528cbdfc306",
         "android_client_info": {
           "package_name": "com.energy.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAbh_BISjMBo1hALsH62Pkqs1J8-FeEXEE"
+          "current_key": "AIzaSyD0dB10X-2MVNO3jVTxEpg-YXo8BQD70NI"
         }
       ],
       "services": {
